@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traffic Analysis</title>
+    <style>
+        /* General reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #1e1e1e;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: scale(1.02);
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #FFD700;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        input[type="text"] {
+            padding: 12px;
+            width: 80%;
+            margin: 10px 0;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 2px solid #FFD700;
+            background-color: #1e1e1e;
+            color: white;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: #00ffcc;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.7);
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #FFD700;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #ffdd00;
+            transform: scale(1.05);
+        }
+
+        button:active {
+            background-color: #e6c700;
+            transform: scale(1);
+        }
+
+        #graph-container {
+            margin-top: 30px;
+        }
+
+        img {
+            margin-top: 20px;
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.6);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🚦 Traffic Analysis by Day 🚦</h1>
+        <form id="dayForm">
+            <input type="text" id="day" placeholder="Enter Day (e.g., Monday)" autocomplete="off" required>
+            <button type="submit">Submit</button>
+        </form>
+        <div id="graph-container">
+            <img id="graph" src="" alt="Traffic Graph" style="display:none;">
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('dayForm');
+        const graphImg = document.getElementById('graph');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const day = document.getElementById('day').value;
+
+            fetch('/plot', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `day=${day}`
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Invalid day');
+                }
+                return response.json();
+            })
+            .then(data => {
+                graphImg.src = data.graph;
+                graphImg.style.display = 'block';
+            })
+            .catch(error => {
+                alert(error.message);
+            });
+        });
+    </script>
+
+</body>
+</html>
